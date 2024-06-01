@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include <vector>
 
 #include <glad/glad.h>
 
@@ -20,6 +21,7 @@
 #include <iostream>
 
 #include "shader.h"
+#include "framebuffer.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -29,7 +31,7 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-
+std::vector<bool> imGuiElements;
 
 int main()
 {
@@ -149,6 +151,8 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -161,6 +165,8 @@ int main()
     // Adjusts all of the triangles in the scene
     glEnable(GL_DEPTH_TEST);
     // render loop
+
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -173,8 +179,6 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-
 
 
         firstShader.use();
@@ -227,6 +231,8 @@ int main()
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
+
         ImGui::Begin("Tool Palette");
         ImGui::Text("Camera Coordinates");
         ImGui::SliderFloat("x", &uiVariables::viewX, 0.0f, 2.0f);
@@ -241,12 +247,10 @@ int main()
         ImGui::Text("cube rotation settings");
         ImGui::Checkbox("time rotate", &uiVariables::isTimeRotate);
         ImGui::SliderFloat("cube rotate speed", &uiVariables::cubeRotateSpeed, 0, 100);
-
         ImGui::End();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
