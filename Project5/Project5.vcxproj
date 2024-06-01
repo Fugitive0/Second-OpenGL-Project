@@ -440,9 +440,8 @@
     <ClInclude Include="dependencies\include\GLM\vector_relational.hpp" />
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="src\Cube.h" />
-    <ClInclude Include="src\framebuffer.h" />
     <ClInclude Include="src\shader.h" />
-    <ClInclude Include="src\uiVariables.h" />
+    <ClInclude Include="src\vars.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\GLM\detail\func_common.inl" />
@@ -596,11 +595,8 @@
     <ClCompile Include="D:\libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dependencies\include\GLM\detail\glm.cpp" />
     <ClCompile Include="dependencies\include\GLM\glm.cppm" />
-    <ClCompile Include="src\framebuffer.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\shader.cpp" />
-    <ClCompile Include="src\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\glfw3.lib" />

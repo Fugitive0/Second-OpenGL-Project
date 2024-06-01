@@ -11,36 +11,29 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>
 
-#include "uiVariables.h"
-
-
 #include <GLFW/glfw3.h>
-
-
 #include <cstdlib>
 #include <iostream>
 
+#include "vars.h"
 #include "shader.h"
-#include "framebuffer.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
-std::vector<bool> imGuiElements;
+GuiVars::Settings settings;
 
 int main()
 {
+    
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(settings.SCR_HEIGHT, settings.SCR_WIDTH, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -167,6 +160,8 @@ int main()
     // render loop
 
 
+
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -185,11 +180,11 @@ int main()
         // Adjusts all of the triangles in the scene
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
-        glm::vec4 color = glm::vec4(uiVariables::colorR, uiVariables::colorG, uiVariables::colorB, uiVariables::colorA);
+        glm::vec4 color = settings.color4;
 
-        view = glm::translate(view, glm::vec3(0.0f + uiVariables::viewX, 0.0f + uiVariables::viewY, -3.0f + uiVariables::viewZ));
+        view = glm::translate(view, glm::vec3(0.0f + settings.view3.x, 0.0f + settings.view3.y, -3.0f + settings.view3.z));
         view = glm::rotate(view, 20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)settings.SCR_WIDTH / (float)settings.SCR_HEIGHT, 0.1f, 100.0f);
 
 
 
@@ -209,13 +204,13 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubeLocations[0]);
-        if (!uiVariables::isTimeRotate)
+        if (!settings.isTimeRotate)
         {
-            model = glm::rotate(model, glm::radians(uiVariables::rotate), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(settings.rotate), glm::vec3(1.0f, 0.3f, 0.5f));
         }
         else
         {
-            model = glm::rotate(model, (float)glfwGetTime() * uiVariables::cubeRotateSpeed, glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, (float)glfwGetTime() * settings.cubeRotateSpeed, glm::vec3(1.0f, 0.3f, 0.5f));
         }
 
         firstShader.setMat4("model", model);
@@ -234,31 +229,39 @@ int main()
 
 
         ImGui::Begin("Tool Palette");
+
+
+
         ImGui::Text("Camera Coordinates");
-        ImGui::SliderFloat("x", &uiVariables::viewX, 0.0f, 2.0f);
-        ImGui::SliderFloat("y", &uiVariables::viewY, 0.0f, 2.0f);
-        ImGui::SliderFloat("z", &uiVariables::viewZ, 0.0f, 2.0f);
-        ImGui::SliderFloat("rotate", &uiVariables::rotate, 0, 100);
-        ImGui::Text("Cube Colors");
-        ImGui::SliderFloat("R", &uiVariables::colorR, 0.0f, 1.0f);
-        ImGui::SliderFloat("G", &uiVariables::colorG, 0.0f, 1.0f);
-        ImGui::SliderFloat("B", &uiVariables::colorB, 0.0f, 1.0f);
-        ImGui::SliderFloat("A", &uiVariables::colorA, 0.0f, 1.0f);
+        ImGui::SliderFloat("x", &settings.view3.x, 0.0f, 2.0f);
+        ImGui::SliderFloat("y", &settings.view3.y, 0.0f, 2.0f);
+        ImGui::SliderFloat("z", &settings.view3.z, 0.0f, 2.0f);
+        ImGui::SliderFloat("rotate", &settings.rotate, 0, 100);
+        ImGui::Text("Cube Colors"); 
+        ImGui::SliderFloat("R", &settings.color4.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("G", &settings.color4.y, 0.0f, 1.0f);
+        ImGui::SliderFloat("B", &settings.color4.z, 0.0f, 1.0f);
+        ImGui::SliderFloat("A", &settings.color4.w, 0.0f, 1.0f);
         ImGui::Text("cube rotation settings");
-        ImGui::Checkbox("time rotate", &uiVariables::isTimeRotate);
-        ImGui::SliderFloat("cube rotate speed", &uiVariables::cubeRotateSpeed, 0, 100);
+        ImGui::Checkbox("time rotate", &settings.isTimeRotate);
+        ImGui::SliderFloat("cube rotate speed", &settings.cubeRotateSpeed, 0, 100);
+
         ImGui::End();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+
+    // Destroy 
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(firstShader.ID);
