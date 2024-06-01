@@ -440,6 +440,7 @@
     <ClInclude Include="dependencies\include\GLM\vector_relational.hpp" />
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\uiVariables.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\GLM\detail\func_common.inl" />

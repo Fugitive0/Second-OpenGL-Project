@@ -10,6 +10,8 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp>
 
+#include "uiVariables.h"
+
 
 #include <GLFW/glfw3.h>
 
@@ -154,18 +156,7 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    // ImGUI vars
-    
-    float viewX = 0.0f;
-    float viewY = 0.0f;
-    float viewZ = 0.0f;
-    float colorR = 0.0f;
-    float colorG = 0.0f;
-    float colorB = 0.0f;
-    float colorA = 0.0f;
-    float rotate = 0.0f;
-    float cubeRotateSpeed = 0.0f;
-    bool isTimeRotate = false;
+
 
     // Adjusts all of the triangles in the scene
     glEnable(GL_DEPTH_TEST);
@@ -184,13 +175,15 @@ int main()
         ImGui::NewFrame();
 
 
+
+
         firstShader.use();
         // Adjusts all of the triangles in the scene
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
-        glm::vec4 color = glm::vec4(colorR, colorG, colorB, colorA);
+        glm::vec4 color = glm::vec4(uiVariables::colorR, uiVariables::colorG, uiVariables::colorB, uiVariables::colorA);
 
-        view = glm::translate(view, glm::vec3(0.0f + viewX, 0.0f + viewY, -3.0f + viewZ));
+        view = glm::translate(view, glm::vec3(0.0f + uiVariables::viewX, 0.0f + uiVariables::viewY, -3.0f + uiVariables::viewZ));
         view = glm::rotate(view, 20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
@@ -212,13 +205,13 @@ int main()
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubeLocations[0]);
-        if (!isTimeRotate)
+        if (!uiVariables::isTimeRotate)
         {
-            model = glm::rotate(model, glm::radians(rotate), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(uiVariables::rotate), glm::vec3(1.0f, 0.3f, 0.5f));
         }
         else
         {
-            model = glm::rotate(model, (float)glfwGetTime() * cubeRotateSpeed, glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, (float)glfwGetTime() * uiVariables::cubeRotateSpeed, glm::vec3(1.0f, 0.3f, 0.5f));
         }
 
         firstShader.setMat4("model", model);
@@ -236,18 +229,18 @@ int main()
 
         ImGui::Begin("Tool Palette");
         ImGui::Text("Camera Coordinates");
-        ImGui::SliderFloat("x", &viewX, 0.0f, 2.0f);
-        ImGui::SliderFloat("y", &viewY, 0.0f, 2.0f);
-        ImGui::SliderFloat("z", &viewZ, 0.0f, 2.0f);
-        ImGui::SliderFloat("rotate", &rotate, 0, 100);
+        ImGui::SliderFloat("x", &uiVariables::viewX, 0.0f, 2.0f);
+        ImGui::SliderFloat("y", &uiVariables::viewY, 0.0f, 2.0f);
+        ImGui::SliderFloat("z", &uiVariables::viewZ, 0.0f, 2.0f);
+        ImGui::SliderFloat("rotate", &uiVariables::rotate, 0, 100);
         ImGui::Text("Cube Colors");
-        ImGui::SliderFloat("R", &colorR, 0.0f, 1.0f);
-        ImGui::SliderFloat("G", &colorG, 0.0f, 1.0f);
-        ImGui::SliderFloat("B", &colorB, 0.0f, 1.0f);
-        ImGui::SliderFloat("A", &colorA, 0.0f, 1.0f);
+        ImGui::SliderFloat("R", &uiVariables::colorR, 0.0f, 1.0f);
+        ImGui::SliderFloat("G", &uiVariables::colorG, 0.0f, 1.0f);
+        ImGui::SliderFloat("B", &uiVariables::colorB, 0.0f, 1.0f);
+        ImGui::SliderFloat("A", &uiVariables::colorA, 0.0f, 1.0f);
         ImGui::Text("cube rotation settings");
-        ImGui::Checkbox("time rotate", &isTimeRotate);
-        ImGui::SliderFloat("cube rotate speed", &cubeRotateSpeed, 0, 100);
+        ImGui::Checkbox("time rotate", &uiVariables::isTimeRotate);
+        ImGui::SliderFloat("cube rotate speed", &uiVariables::cubeRotateSpeed, 0, 100);
 
         ImGui::End();
 
