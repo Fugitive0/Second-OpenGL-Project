@@ -17,12 +17,20 @@
 
 #include "vars.h"
 #include "shader.h"
+#include "vbo.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
+
+
 GuiVars::Settings settings;
+GuiVars::Settings secondSettings;
+
+
+
+
 
 int main()
 {
@@ -50,7 +58,9 @@ int main()
     }
 
 
-    Shader firstShader("src/3.3vShader.vs", "src/3.3fShader.fs");
+    Shader firstShader("shaders/3.3vShader.vs", "shaders/3.3fShader.fs");
+    Shader secondShader("shaders/lightShader.vs", "shaders/lightShader.fs");
+
 
 
     /*
@@ -117,7 +127,7 @@ int main()
     glm::vec3 cubeLocations[] =
     {
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(2.0f,  2.0f, -2.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 0.0f)
     };
@@ -129,21 +139,36 @@ int main()
 #pragma endregion
 
 
-    unsigned int VBO, VAO;
+    unsigned int VAO;
    
 
-    glGenVertexArrays(1, &VAO); // Here we generate the vertex array object
-    glGenBuffers(1, &VBO); // Then we generate the Vertex Buffer object
+    VertexBufferObject firstVBO(VAO, sizeof(vertices), vertices);
 
 
-    glBindVertexArray(VAO); // We now bind the VAO to the VBO
+    //glGenVertexArrays(1, &VAO); // Here we generate the vertex array object
+    //glGenBuffers(1, &VBO); // Then we generate the Vertex Buffer object
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); // The below code will now affect the VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // We give our vertex buffer array data.
 
+    //glBindVertexArray(VAO); // We now bind the VAO to the VBO
+
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO); // The below code will now affect the VBO
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // We give our vertex buffer array data.
+
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    //glEnableVertexAttribArray(0);
+
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+
+    unsigned int lightCubeVAO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
 
 
     IMGUI_CHECKVERSION();
@@ -198,7 +223,6 @@ int main()
 
 
         // render boxes 
-        glBindVertexArray(VAO);
 
         // Draw first cube
 
@@ -214,30 +238,43 @@ int main()
         }
 
         firstShader.setMat4("model", model);
-
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         
         // Draw second cube
 
+        secondShader.use();
+
+        secondShader.setMat4("projection", projection);
+        secondShader.setMat4("view", view);
+
         model = glm::mat4(1.0f);
         model = glm::translate(model, cubeLocations[1]);
         model = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-        firstShader.setMat4("model", model);
+        secondShader.setMat4("model", model);
+  
 
+        glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
 
 
 
         ImGui::Begin("Tool Palette");
 
-
+ 
 
         ImGui::Text("Camera Coordinates");
         ImGui::SliderFloat("x", &settings.view3.x, 0.0f, 2.0f);
         ImGui::SliderFloat("y", &settings.view3.y, 0.0f, 2.0f);
-        ImGui::SliderFloat("z", &settings.view3.z, 0.0f, 2.0f);
+        ImGui::SliderFloat("z", &settings.view3.z, -10.0f, 2.0f);
         ImGui::SliderFloat("rotate", &settings.rotate, 0, 100);
         ImGui::Text("Cube Colors"); 
+
+        ImVec2 pos = ImGui::GetCursorScreenPos();
+
+
+
         ImGui::SliderFloat("R", &settings.color4.x, 0.0f, 1.0f);
         ImGui::SliderFloat("G", &settings.color4.y, 0.0f, 1.0f);
         ImGui::SliderFloat("B", &settings.color4.z, 0.0f, 1.0f);
@@ -250,6 +287,14 @@ int main()
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+
+
+
+#pragma region Test Code 
+
+#pragma endregion
 
 
         glfwSwapBuffers(window);
@@ -283,3 +328,4 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
+

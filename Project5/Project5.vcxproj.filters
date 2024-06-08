@@ -930,6 +930,9 @@
     <ClInclude Include="src\vars.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\vbo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\GLM\detail\func_common.inl">
@@ -1346,8 +1349,10 @@
     <None Include="dependencies\include\GLM\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="src\3.3vShader.vs" />
-    <None Include="src\3.3fShader.fs" />
+    <None Include="shaders\3.3vShader.vs" />
+    <None Include="shaders\3.3fShader.fs" />
+    <None Include="shaders\lightShader.vs" />
+    <None Include="shaders\lightShader.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dependencies\include\GLM\detail\glm.cpp">
@@ -1382,6 +1387,9 @@
     </ClCompile>
     <ClCompile Include="D:\libraries\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vbo.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
