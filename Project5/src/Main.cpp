@@ -140,12 +140,10 @@ int main()
 
 
     unsigned int VAO;
-   
+    glGenVertexArrays(1, &VAO); // Here we generate the vertex array object
+  
 
     VertexBufferObject firstVBO(VAO, sizeof(vertices), vertices);
-
-
-    //glGenVertexArrays(1, &VAO); // Here we generate the vertex array object
     //glGenBuffers(1, &VBO); // Then we generate the Vertex Buffer object
 
 
@@ -166,7 +164,7 @@ int main()
     glBindVertexArray(lightCubeVAO);
 
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, firstVBO.GetBuffer());
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -308,7 +306,7 @@ int main()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    firstVBO.~VertexBufferObject();
     glDeleteProgram(firstShader.ID);
 
     // clear all previously allocated GLFW resources.
